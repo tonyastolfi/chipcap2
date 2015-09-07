@@ -12,8 +12,13 @@ class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         data = {"rh": rh, "tempF": tempF}
         self.wfile.write(json.dumps(data))
 
-def run(server_class=BaseHTTPServer.HTTPServer,
+def run(host="localhost",
+        port=8000,
+        server_class=BaseHTTPServer.HTTPServer,
         handler_class=RHTempRequestHandler):
-    server_address = ('localhost', 8000)
+    server_address = (host, port)
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
+
+if __name__ == "__main__":
+    run()
