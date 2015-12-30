@@ -1,6 +1,7 @@
 import BaseHTTPServer
 import chipcap2
 import json
+import datetime
 
 class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -9,7 +10,7 @@ class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
         s = chipcap2.Sensor(1)
         rh, tempF = s.read()
-        data = {"rh": rh, "tempF": tempF}
+        data = {"ts": str(datetime.datetime.now()), "rh": rh, "tempF": tempF}
         self.wfile.write(json.dumps(data))
 
 def run(host="localhost",
