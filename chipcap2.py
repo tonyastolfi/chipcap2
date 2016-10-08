@@ -13,3 +13,11 @@ class Sensor:
         self.tempC = float(self._data[2] * 64 + (self._data[4] & 0xfc) / 4) / (1 << 14) * 165. - 40.
         self.tempF = self.tempC * 9./5. + 32.
         return self.rh, self.tempF
+
+
+if __name__ == "__main__":
+    s = Sensor(1)
+    rh, tempF = s.read()
+    print 'rh {}'.format(rh)
+    print 'tempF {}'.format(tempF)
+
