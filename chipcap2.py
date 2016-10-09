@@ -9,8 +9,8 @@ class Sensor:
     
     def read(self):
         self._data = self._bus.read_i2c_block_data(address, data_fetch)
-        self.rh = float((self._data[0] & 0x3f) * 256 + self._data[1]) / (1 << 14) * 100.
-        self.tempC = float(self._data[2] * 64 + (self._data[4] & 0xfc) / 4) / (1 << 14) * 165. - 40.
+        self.rh = float(((self._data[0] & 0x3f) << 8) | (self._data[1] & 0xff)) * 100.0 / 16384.0
+        self.tempC = float((self._data[2] << 6) | ((self._data[3] & 0xfc) >> 2)) * 165.0 / 16384.0 - 40.0
         self.tempF = self.tempC * 9./5. + 32.
         return self.rh, self.tempF
 
@@ -20,4 +20,5 @@ if __name__ == "__main__":
     rh, tempF = s.read()
     print 'rh {}'.format(rh)
     print 'tempF {}'.format(tempF)
-
+    print 'tempC {}'.format(s.tempC)
+    print 'raw_chipcap2_data {}'.format(s._data)

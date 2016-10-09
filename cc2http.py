@@ -18,12 +18,20 @@ class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if 'application/json' in accept:
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            data = {"ts": str(datetime.datetime.now()), "rh": rh, "tempF": tempF}
+            data = {
+                "ts": str(datetime.datetime.now()),
+                "rh": rh,
+                "tempF": tempF,
+                "tempC": s.tempC,
+                "chipcap2_raw_data": s_.data
+            }
             self.wfile.write(json.dumps(data))
         else:
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
-            self.wfile.write('rh {}\ntempF {}\n'.format(rh, tempF))
+            self.wfile.write('rh {}\ntempF {}\ntempC {}\n'.format(rh, tempF, s.tempC))
+            for i in range(len(s._data)):
+                self.wfile.write('chipcap2_raw_data{offset="%02d"} %d\n' % (i, s._data[i]))
 
 
 def run(host="0.0.0.0",
