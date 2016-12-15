@@ -2,6 +2,10 @@ import BaseHTTPServer
 import chipcap2
 import json
 import datetime
+import sys
+
+
+loc = sys.argv[1]
 
 
 def trim(s):
@@ -29,9 +33,10 @@ class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
-            self.wfile.write('rh {}\ntempF {}\ntempC {}\n'.format(rh, tempF, s.tempC))
+            self.wfile.write('rh{location="%s"} %f\ntempF{location="%s"} %f\ntempC{location="%s"} %f\n'
+                             % (loc, rh, loc, tempF, loc, s.tempC))
             for i in range(len(s._data)):
-                self.wfile.write('chipcap2_raw_data{offset="%02d"} %d\n' % (i, s._data[i]))
+                self.wfile.write('chipcap2_raw_data{location="%s", offset="%02d"} %d\n' % (loc, i, s._data[i]))
 
 
 def run(host="0.0.0.0",
