@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import smbus
 
 address = 0x28
