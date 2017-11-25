@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import smbus
+import logging
 
 address = 0x28
 data_fetch = 0x80 | address
@@ -14,6 +15,13 @@ class Sensor:
         self.tempC = float((self._data[2] << 6) | ((self._data[3] & 0xfc) >> 2)) * 165.0 / 16384.0 - 40.0
         self.tempF = self.tempC * 9./5. + 32.
         return self.rh, self.tempF
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self._bus.close()
+        logging.info('closed the bus')
 
 
 if __name__ == "__main__":

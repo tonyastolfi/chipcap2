@@ -7,7 +7,12 @@ import os
 import sys
 import time
 import httplib
+import logging
 
+
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logging.info('logging initialized')
 
 childpid = os.fork()
 if childpid != 0:
@@ -41,8 +46,9 @@ def trim(s):
 class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         try:
-            s = chipcap2.Sensor(1)
-            rh, tempF = s.read()
+            with chipcap2.Sensor(1) as s:
+                logging.info('s=%s', s)
+                rh, tempF = s.read()
             accept = map(trim, (self.headers.get("Accept") or '').split(','))
             self.send_response(200)
             print accept
