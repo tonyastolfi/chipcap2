@@ -46,6 +46,7 @@ def trim(s):
 class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         try:
+            logging.info('inside GET handler')
             with chipcap2.Sensor(1) as s:
                 logging.info('s=%s', s)
                 rh, tempF = s.read()
@@ -66,10 +67,14 @@ class RHTempRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             else:
                 self.send_header("Content-Type", "text/plain")
                 self.end_headers()
-                self.wfile.write('rh{location="%s"} %f\ntempF{location="%s"} %f\ntempC{location="%s"} %f\n'
+                self.wfile.write('rh{location="%s"} %f\n'
+                                 'tempF{location="%s"} %f\n'
+                                 'tempC{location="%s"} %f\n'
                                  % (loc, rh, loc, tempF, loc, s.tempC))
                 for i in range(len(s._data)):
                     self.wfile.write('chipcap2_raw_data{location="%s", offset="%02d"} %d\n' % (loc, i, s._data[i]))
+            self.wfile.flush()
+            self.wfile.close_connection = 1
         except Exception as e:
             print 'Error: {}'.format(e)
             self.send_response(503)
